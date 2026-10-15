@@ -82,7 +82,10 @@ class _ReminderSettingsScreenState extends ConsumerState<ReminderSettingsScreen>
                 'El canal de avisos está sin sonido. Revísalo en los ajustes del teléfono.'),
           const SizedBox(height: 12),
           Text('Avisos futuros programados: ${service.scheduledCount}'),
-        TextButton.icon(onPressed: () => context.push('/backup'), icon: const Icon(Icons.backup_outlined), label: const Text('Respaldo y recuperación')),
+          TextButton.icon(
+              onPressed: () => context.push('/backup'),
+              icon: const Icon(Icons.backup_outlined),
+              label: const Text('Respaldo y recuperación')),
           if (service.deviceZone != null)
             Text('Zona del teléfono: ${service.deviceZone}'),
           const SizedBox(height: 16),
