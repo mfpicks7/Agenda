@@ -1,0 +1,38 @@
+name: Descargar APK como Mi Agenda
+on:
+  push:
+    branches: [entrega-mi-agenda]
+    paths: [.github/workflows/entregar-mi-agenda.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  entregar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mi-Agenda-Recuperacion
+          path: descarga
+          run-id: 38814688023
+          github-token: ${{ github.token }}
+      - name: Renombrar la APK verificada sin modificar su contenido
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          source = Path('descarga/Mi-Agenda-Recuperacion.apk')
+          expected = hashlib.sha256(source.read_bytes()).hexdigest()
+          target = source.with_name('Mi Agenda.apk')
+          source.rename(target)
+          assert hashlib.sha256(target.read_bytes()).hexdigest() == expected
+          print('Mi Agenda.apk — SHA256:', expected)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mi-Agenda
+          path: descarga/Mi Agenda.apk
+          if-no-files-found: error
+          retention-days: 14
