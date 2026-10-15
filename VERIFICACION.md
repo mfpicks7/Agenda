@@ -1,3 +1,18 @@
+# Actualización 1.0.1 — icono de la aplicación
+
+- Commit: `fb620b6a6f2640c46af824211f49dab7b9a92590`.
+- Imagen MF suministrada por el usuario, convertida en recursos PNG de 48, 72, 96, 144 y 192 píxeles; arte de 512 píxeles para icono adaptable Android 26+.
+- Manifiesto con `android:icon` y `android:roundIcon`; versión 1.0.1+2.
+- XML e integridad de los seis PNG subidos a GitHub comprobados localmente.
+- `flutter analyze`: sin incidencias; `flutter test`: 11 pruebas correctas; compilación APK debug correcta.
+- Instalación, primer arranque y reapertura correctos en emulador Android 35. No se probó la actualización sobre la APK anterior en el teléfono físico; las firmas debug temporales pueden impedirla.
+- [Ejecución verificada](https://github.com/mfpicks7/Agenda/actions/runs/38688141414).
+- [Descargar APK 1.0.1](https://github.com/mfpicks7/Agenda/actions/runs/38688141414/artifacts/11951730004).
+
+La comprobación Android revisa instalación y arranque; no incluye una inspección visual automatizada del icono del lanzador. El PNG de mayor densidad fue inspeccionado visualmente antes de compilar. Se conserva debajo la evidencia de la entrega anterior.
+
+---
+
 # Verificación de Mi Agenda E1
 
 Compilación verificada el 15 de octubre de 2026 en GitHub Actions:

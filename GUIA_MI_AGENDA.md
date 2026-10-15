@@ -1,10 +1,10 @@
-# Mi Agenda — primera versión Android
+# Mi Agenda — Android 1.0.1
 
 Calendario mensual desde lunes, Trabajo azul y Personal verde, filtros, dos títulos por día y +N, actividades ordenadas por hora, crear/editar/eliminar con confirmación, notas y pendientes marcables y ordenables. Persistencia SQLite local mediante Drift. Sin cuentas, servidor, telemetría de la app ni permiso INTERNET.
 
 ## Descargar e instalar
 
-1. Abrir [la descarga verificada](https://github.com/mfpicks7/Agenda/actions/runs/38686848942/artifacts/11950068074), iniciando sesión en GitHub si lo pide.
+1. Abrir [la descarga verificada](https://github.com/mfpicks7/Agenda/actions/runs/38688141414/artifacts/11951730004), iniciando sesión en GitHub si lo pide.
 2. Descargar el ZIP y extraer `Mi-Agenda-debug.apk`.
 3. Abrir el APK en el teléfono Android. Si Android lo solicita, permitir la instalación desde el navegador o gestor de archivos empleado.
 
@@ -12,7 +12,7 @@ Es una APK de prueba. Los artefactos caducan el 29 de octubre de 2026. Para rege
 
 ## Validación realizada
 
-[Compilación y prueba Android correctas](https://github.com/mfpicks7/Agenda/actions/runs/38686848942): análisis sin incidencias, 11 pruebas Flutter correctas, APK compilada e instalada, primer arranque y reapertura correctos en emulador Android 35. Ver el alcance exacto en VERIFICACION.md. La prueba en el teléfono físico queda pendiente.
+[Compilación y prueba Android correctas](https://github.com/mfpicks7/Agenda/actions/runs/38688141414): análisis sin incidencias, 11 pruebas Flutter correctas, APK compilada e instalada, primer arranque y reapertura correctos en emulador Android 35. Ver el alcance exacto en VERIFICACION.md. La prueba en el teléfono físico queda pendiente.
 
 ## Comprobar en el teléfono
 
@@ -64,3 +64,5 @@ Drift usa SQL explícito sin código generado. Guardar actividad y tareas es tra
 - E3: múltiples recordatorios, permisos Android, programación, reinicios y pruebas de entrega de notificaciones.
 
 La primera APK no ofrece alarmas ni repetición. La firma debug es temporal y puede cambiar entre compilaciones de runners distintos; no desinstalar una agenda con datos importantes para resolver un conflicto de firma. Antes de distribuir actualizaciones se necesita una firma estable gestionada de forma segura.
+
+El icono de la versión 1.0.1 utiliza la imagen MF proporcionada por el usuario. Se incluye en el lanzador y en su variante adaptable para Android 8+.
