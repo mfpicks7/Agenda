@@ -60,9 +60,17 @@ class Activity {
       ? 'Todo el día'
       : '${(minuteOfDay! ~/ 60).toString().padLeft(2, '0')}:${(minuteOfDay! % 60).toString().padLeft(2, '0')}';
 
-  Activity withTimeZone(String zone) => Activity(id: id, title: title, category: category,
-    date: date, minuteOfDay: minuteOfDay, notes: notes, tasks: tasks,
-    timeZoneId: zone, reminderOffsets: reminderOffsets, allDayReminderMinute: allDayReminderMinute);
+  Activity withTimeZone(String zone) => Activity(
+      id: id,
+      title: title,
+      category: category,
+      date: date,
+      minuteOfDay: minuteOfDay,
+      notes: notes,
+      tasks: tasks,
+      timeZoneId: zone,
+      reminderOffsets: reminderOffsets,
+      allDayReminderMinute: allDayReminderMinute);
 
   String? validate() {
     if (title.trim().isEmpty) {
@@ -74,7 +82,8 @@ class Activity {
     if (minuteOfDay != null && (minuteOfDay! < 0 || minuteOfDay! >= 1440)) {
       return 'Selecciona una hora válida.';
     }
-    if (reminderOffsets.length > 8 || reminderOffsets.toSet().length != reminderOffsets.length ||
+    if (reminderOffsets.length > 8 ||
+        reminderOffsets.toSet().length != reminderOffsets.length ||
         reminderOffsets.any((m) => m < 0 || m > 525600)) {
       return 'Elige hasta ocho avisos diferentes, entre 0 y 525600 minutos.';
     }

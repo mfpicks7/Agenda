@@ -60,8 +60,10 @@ class AppDatabase extends GeneratedDatabase {
         },
       );
   Future<void> _createReminders() async {
-    await customStatement("ALTER TABLE activities ADD COLUMN time_zone_id TEXT");
-    await customStatement('ALTER TABLE activities ADD COLUMN all_day_reminder_minute INTEGER NOT NULL DEFAULT 540 CHECK(all_day_reminder_minute BETWEEN 0 AND 1439)');
+    await customStatement(
+        "ALTER TABLE activities ADD COLUMN time_zone_id TEXT");
+    await customStatement(
+        'ALTER TABLE activities ADD COLUMN all_day_reminder_minute INTEGER NOT NULL DEFAULT 540 CHECK(all_day_reminder_minute BETWEEN 0 AND 1439)');
     await customStatement('''CREATE TABLE reminders (
       activity_id TEXT NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
       offset_minutes INTEGER NOT NULL CHECK(offset_minutes BETWEEN 0 AND 525600),
@@ -75,5 +77,4 @@ class AppDatabase extends GeneratedDatabase {
       UNIQUE(activity_id, offset_minutes)
     )''');
   }
-
 }

@@ -14,6 +14,8 @@ final activitiesProvider = StreamProvider<List<Activity>>(
   (ref) => ref.watch(repositoryProvider).watchAll(),
 );
 
-final notificationGatewayProvider = Provider<NotificationGateway>((ref) => AndroidNotificationGateway());
-final reminderCoordinatorProvider = ChangeNotifierProvider<ReminderCoordinator>((ref) =>
-  ReminderCoordinator(ref.watch(repositoryProvider), ref.watch(notificationGatewayProvider)));
+final notificationGatewayProvider =
+    Provider<NotificationGateway>((ref) => AndroidNotificationGateway());
+final reminderCoordinatorProvider = ChangeNotifierProvider<ReminderCoordinator>(
+    (ref) => ReminderCoordinator(
+        ref.watch(repositoryProvider), ref.watch(notificationGatewayProvider)));

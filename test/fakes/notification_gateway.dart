@@ -14,7 +14,8 @@ class FakeGateway implements NotificationGateway {
   @override
   Future<String> deviceTimeZone() async => zone;
   @override
-  Future<NotificationPermissionState> permissions() async => NotificationPermissionState(enabled: enabled, exact: exact);
+  Future<NotificationPermissionState> permissions() async =>
+      NotificationPermissionState(enabled: enabled, exact: exact);
   @override
   Future<void> requestNotifications() async {}
   @override
@@ -24,16 +25,23 @@ class FakeGateway implements NotificationGateway {
   @override
   Future<Set<int>> pendingIds() async => scheduled.keys.toSet();
   @override
-  Future<void> cancel(int id) async { cancelled.add(id); scheduled.remove(id); }
+  Future<void> cancel(int id) async {
+    cancelled.add(id);
+    scheduled.remove(id);
+  }
+
   @override
-  Future<void> schedule(int id, String title, String body, String? payload, tz.TZDateTime instant, bool exact) async {
-    if (fail) { throw StateError('Fallo de plataforma'); }
+  Future<void> schedule(int id, String title, String body, String? payload,
+      tz.TZDateTime instant, bool exact) async {
+    if (fail) {
+      throw StateError('Fallo de plataforma');
+    }
     scheduled[id] = instant;
     modes.add(exact);
   }
+
   @override
   Future<void> showTest() async {}
   @override
   Future<String?> launchActivity() async => null;
 }
-

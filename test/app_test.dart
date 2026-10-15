@@ -197,7 +197,8 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('El formulario guarda y programa avisos con la zona del teléfono', (tester) async {
+  testWidgets('El formulario guarda y programa avisos con la zona del teléfono',
+      (tester) async {
     tester.view.physicalSize = const Size(400, 1800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -206,8 +207,10 @@ void main() {
     final gateway = FakeGateway();
     addTearDown(repo.close);
     agendaRouter.go('/');
-    await tester.pumpWidget(ProviderScope(overrides: [repositoryProvider.overrideWithValue(repo),
-      notificationGatewayProvider.overrideWithValue(gateway)], child: const AgendaApp()));
+    await tester.pumpWidget(ProviderScope(overrides: [
+      repositoryProvider.overrideWithValue(repo),
+      notificationGatewayProvider.overrideWithValue(gateway)
+    ], child: const AgendaApp()));
     await tester.pumpAndSettle();
     final tomorrow = dateKey(DateTime.now().add(const Duration(days: 1)));
     agendaRouter.push('/new?date=$tomorrow');
