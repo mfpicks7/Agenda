@@ -55,8 +55,25 @@ def find_control(label, click=False):
 
 
 def open_settings():
-    print(adb('shell', 'am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'miagenda://app/notifications', '-p', PACKAGE), flush=True)
+    # La revocación del permiso puede matar el proceso. Abrir por el lanzador y
+    # usar la campana visible evita depender de enlaces recibidos al arrancar.
+    print(adb('shell', 'am', 'start', '-W', '-n', PACKAGE + '/.MainActivity'), flush=True)
     time.sleep(4)
+    tree = screen()
+    if not any('Avisos y permisos' in node.attrib.get('content-desc', '') + node.attrib.get('text', '') for node in tree.iter('node')):
+        create = find_control('Nueva actividad')
+        left, top, right, bottom = map(int, re.findall(r'\d+', create['bounds']))
+        candidates = []
+        for node in screen().iter('node'):
+            values = list(map(int, re.findall(r'\d+', node.attrib.get('bounds', ''))))
+            if len(values) == 4 and node.attrib.get('class') == 'android.widget.Button':
+                x1, y1, x2, y2 = values
+                if x1 >= right and y1 < bottom and y2 > top:
+                    candidates.append(values)
+        assert len(candidates) == 1, 'Debe haber una campana a la derecha de Nueva actividad'
+        x1, y1, x2, y2 = candidates[0]
+        adb('shell', 'input', 'tap', str((x1+x2)//2), str((y1+y2)//2))
+        time.sleep(2)
     adb('shell', 'input', 'swipe', '540', '500', '540', '1700', '400')
     time.sleep(1)
 
@@ -78,16 +95,19 @@ open_settings()
 find_control('Notificaciones permitidas')
 find_control('Probar aviso ahora', click=True)
 notification_contains('Aviso de prueba')
+print('OK: notificación inmediata recibida', flush=True)
 find_control('Probar aviso en 10 segundos', click=True)
 adb('shell', 'input', 'keyevent', 'KEYCODE_HOME')
 time.sleep(1)
 adb('shell', 'am', 'kill', PACKAGE)  # Cierra el proceso; no usa force-stop, que bloquea alarmas por diseño de Android.
 notification_contains('Aviso programado de prueba')
+print('OK: notificación programada recibida en segundo plano', flush=True)
 (OUT / 'aviso-programado.png').write_bytes(subprocess.check_output(['adb', 'exec-out', 'screencap', '-p']))
 
 adb('shell', 'pm', 'revoke', PACKAGE, 'android.permission.POST_NOTIFICATIONS')
 open_settings()
 find_control('Notificaciones bloqueadas o sin permiso')
+print('OK: permiso denegado reflejado en la pantalla', flush=True)
 assert 'granted=false' in adb('shell', 'dumpsys', 'package', PACKAGE).split('android.permission.POST_NOTIFICATIONS:')[-1].split('\n')[0]
 
 adb('shell', 'pm', 'grant', PACKAGE, 'android.permission.POST_NOTIFICATIONS')
