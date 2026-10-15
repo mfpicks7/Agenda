@@ -42,11 +42,15 @@ jobs:
       - name: Ejecutar pruebas Flutter
         run: flutter test --reporter expanded
       - name: Compilar APK debug
-        run: flutter build apk --debug
+        run: |
+          mkdir -p entrega
+          flutter build apk --debug
+          cp build/app/outputs/flutter-apk/app-debug.apk entrega/Mi-Agenda-debug.apk
+          MI_AGENDA_RECOVERY=1 flutter build apk --debug --dart-define=RECOVERY_BUILD=true
+          cp build/app/outputs/flutter-apk/app-debug.apk entrega/Mi-Agenda-Recuperacion.apk
       - name: Empaquetar APK y código resuelto
         run: |
           mkdir -p entrega
-          cp build/app/outputs/flutter-apk/app-debug.apk entrega/Mi-Agenda-debug.apk
           cp pubspec.lock entrega/pubspec.lock
           sha256sum entrega/Mi-Agenda-debug.apk > entrega/SHA256SUMS.txt
           flutter --version > entrega/FLUTTER_VERSION.txt
@@ -90,6 +94,7 @@ jobs:
           script: |
             bash tool/android_smoke.sh entrega/Mi-Agenda-debug.apk
             python3 tool/notification_smoke.py
+            python3 tool/recovery_smoke.py
       - name: Vista del calendario en el emulador de prueba
         if: always()
         run: |

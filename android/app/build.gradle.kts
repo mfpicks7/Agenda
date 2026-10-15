@@ -14,7 +14,9 @@ android {
     }
     kotlinOptions { jvmTarget = JavaVersion.VERSION_17.toString() }
     defaultConfig {
-        applicationId = "com.miagenda.local"
+        applicationId = if (System.getenv("MI_AGENDA_RECOVERY") == "1") "com.miagenda.recuperacion" else "com.miagenda.local"
+        manifestPlaceholders["agendaLabel"] = if (System.getenv("MI_AGENDA_RECOVERY") == "1") "Mi Agenda Recuperación" else "Mi Agenda"
+        manifestPlaceholders["agendaScheme"] = if (System.getenv("MI_AGENDA_RECOVERY") == "1") "miagendarecuperacion" else "miagenda"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
