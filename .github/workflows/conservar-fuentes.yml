@@ -1,0 +1,61 @@
+name: Conservar fuentes verificadas
+
+on:
+  workflow_run:
+    workflows: [Compilar APK Mi Agenda]
+    types: [completed]
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  guardar:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mi-Agenda-APK-debug
+          path: fuentes-verificadas
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Conservar lock y formato del código que pasó las pruebas
+        env:
+          VERIFIED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          # Si otra persona cambió código después de compilar, no lo reemplazamos.
+          if ! git diff --quiet "$VERIFIED_SHA" HEAD -- lib test pubspec.yaml android; then
+            echo "El código cambió desde la compilación; no se modifica."
+            exit 0
+          fi
+          python3 - <<'PY'
+          import tarfile
+          from pathlib import PurePosixPath
+          with tarfile.open('fuentes-verificadas/codigo-verificado.tar.gz') as archive:
+              members = []
+              for member in archive.getmembers():
+                  path = PurePosixPath(member.name)
+                  if path.is_absolute() or '..' in path.parts:
+                      raise RuntimeError('Ruta no válida en el artefacto')
+                  if member.isfile() and (member.name.startswith(('lib/', 'test/')) or member.name == 'pubspec.lock'):
+                      members.append(member)
+              if not any(member.name == 'pubspec.lock' for member in members):
+                  raise RuntimeError('Falta pubspec.lock en el artefacto')
+              archive.extractall(members=members, filter='data')
+          PY
+          git add lib test pubspec.lock
+          if git diff --cached --quiet; then
+            echo "Las fuentes verificadas ya están guardadas."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Conservar dependencias y formato de la compilación verificada"
+          # Avance normal; si main cambió durante el job, GitHub rechaza el push.
+          git push origin HEAD:main
