@@ -16,7 +16,7 @@ class AppDatabase extends GeneratedDatabase {
       }));
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   Iterable<TableInfo<Table, Object?>> get allTables => const [];
@@ -48,11 +48,32 @@ class AppDatabase extends GeneratedDatabase {
               'CREATE INDEX activities_date_category ON activities(local_date, category)');
           await customStatement(
               'CREATE INDEX tasks_activity_order ON task_templates(activity_id, sort_order)');
+          await _createReminders();
         },
         beforeOpen: (_) async => customStatement('PRAGMA foreign_keys = ON'),
         onUpgrade: (_, from, to) async {
-          throw StateError(
-              'Migración de base de datos no disponible: $from → $to.');
+          if (from == 1 && to == 2) {
+            await _createReminders();
+          } else {
+            throw StateError('Migración no disponible: $from → $to.');
+          }
         },
       );
+  Future<void> _createReminders() async {
+    await customStatement("ALTER TABLE activities ADD COLUMN time_zone_id TEXT");
+    await customStatement('ALTER TABLE activities ADD COLUMN all_day_reminder_minute INTEGER NOT NULL DEFAULT 540 CHECK(all_day_reminder_minute BETWEEN 0 AND 1439)');
+    await customStatement('''CREATE TABLE reminders (
+      activity_id TEXT NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
+      offset_minutes INTEGER NOT NULL CHECK(offset_minutes BETWEEN 0 AND 525600),
+      PRIMARY KEY(activity_id, offset_minutes)
+    )''');
+    await customStatement('''CREATE TABLE notification_registry (
+      notification_id INTEGER PRIMARY KEY AUTOINCREMENT CHECK(notification_id < 2147483647),
+      activity_id TEXT NOT NULL REFERENCES activities(id) ON DELETE CASCADE,
+      offset_minutes INTEGER NOT NULL,
+      scheduled_utc INTEGER NOT NULL,
+      UNIQUE(activity_id, offset_minutes)
+    )''');
+  }
+
 }

@@ -31,6 +31,11 @@ class ActivityRepository {
             'SELECT * FROM task_templates ORDER BY sort_order, id',
           )
           .get();
+      final reminderRows = await db.customSelect('SELECT activity_id, offset_minutes FROM reminders ORDER BY offset_minutes').get();
+      final reminders = <String, List<int>>{};
+      for (final row in reminderRows) {
+        reminders.putIfAbsent(row.read<String>('activity_id'), () => []).add(row.read<int>('offset_minutes'));
+      }
       final tasks = <String, List<AgendaTask>>{};
       for (final row in taskRows) {
         tasks
@@ -50,6 +55,9 @@ class ActivityRepository {
                 date: DateTime.parse(row.read<String>('local_date')),
                 minuteOfDay: row.readNullable<int>('minute_of_day'),
                 notes: row.read<String>('notes'),
+                timeZoneId: row.readNullable<String>('time_zone_id'),
+                allDayReminderMinute: row.read<int>('all_day_reminder_minute'),
+                reminderOffsets: reminders[row.read<String>('id')] ?? [],
                 tasks: tasks[row.read<String>('id')] ?? [],
               ))
           .toList();
@@ -59,6 +67,7 @@ class ActivityRepository {
   Future<void> save(Activity activity) async {
     final error = activity.validate();
     if (error != null) throw ArgumentError(error);
+    if (activity.reminderOffsets.isNotEmpty && (activity.timeZoneId == null || activity.timeZoneId!.isEmpty)) { throw ArgumentError('Falta la zona horaria.'); }
     await db.transaction(() async {
       final now = DateTime.now().millisecondsSinceEpoch;
       await db.customStatement('''INSERT INTO activities
@@ -77,6 +86,12 @@ class ActivityRepository {
         now,
         now,
       ]);
+      await db.customStatement('UPDATE activities SET time_zone_id = ?, all_day_reminder_minute = ? WHERE id = ?',
+        [activity.timeZoneId, activity.allDayReminderMinute, activity.id]);
+      await db.customStatement('DELETE FROM reminders WHERE activity_id = ?', [activity.id]);
+      for (final offset in activity.reminderOffsets) {
+        await db.customStatement('INSERT INTO reminders (activity_id, offset_minutes) VALUES (?, ?)', [activity.id, offset]);
+      }
       await db.customStatement(
           'DELETE FROM task_templates WHERE activity_id = ?', [activity.id]);
       for (var i = 0; i < activity.tasks.length; i++) {

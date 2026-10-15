@@ -5,8 +5,10 @@ import '../features/activities/activity_detail_screen.dart';
 import '../features/activities/activity_form_screen.dart';
 import '../features/calendar/calendar_screen.dart';
 import 'theme.dart';
+import '../features/reminders/reminder_settings_screen.dart';
 
 final agendaRouter = GoRouter(routes: [
+  GoRoute(path: '/notifications', builder: (_, unused) => const ReminderSettingsScreen()),
   GoRoute(path: '/', builder: (_, unused) => const CalendarScreen()),
   GoRoute(
       path: '/new',

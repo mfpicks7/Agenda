@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../app/providers.dart';
 import '../../app/theme.dart';
 import 'activity.dart';
+import '../reminders/reminder_plan.dart';
 
 class ActivityDetailScreen extends ConsumerStatefulWidget {
   const ActivityDetailScreen({super.key, required this.id});
@@ -61,7 +62,9 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
       error = null;
     });
     try {
+      final hadReminders = (ref.read(activitiesProvider).asData?.value ?? []).any((a) => a.id == widget.id && a.reminderOffsets.isNotEmpty);
       await ref.read(repositoryProvider).delete(widget.id);
+      if (hadReminders) { await ref.read(reminderCoordinatorProvider).synchronize(); }
       if (mounted) {
         context.go('/');
       }
@@ -106,6 +109,16 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
                   const SizedBox(height: 12),
                   Text(
                       '${DateFormat.yMMMMEEEEd('es').format(activity.date)}\n${activity.timeLabel}'),
+                  const SizedBox(height: 24),
+                  Text('Avisos', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Text(activity.reminderOffsets.isEmpty ? 'Sin avisos.' : activity.reminderOffsets.map(reminderLabel).join(' · ')),
+                  if (activity.reminderOffsets.isNotEmpty) ...[
+                    if (activity.isAllDay) Text('Hora base: ${(activity.allDayReminderMinute ~/ 60).toString().padLeft(2, '0')}:${(activity.allDayReminderMinute % 60).toString().padLeft(2, '0')}'),
+                    Text('Zona: ${activity.timeZoneId ?? 'sin configurar'}'),
+                    if (ref.watch(reminderCoordinatorProvider).warning != null) Text(ref.watch(reminderCoordinatorProvider).warning!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                    TextButton(onPressed: () => context.push('/notifications'), child: const Text('Revisar permisos de avisos')),
+                  ],
                   const SizedBox(height: 24),
                   Text('Notas', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),

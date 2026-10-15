@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../app/providers.dart';
 import 'activity.dart';
+import '../reminders/reminder_plan.dart';
 
 class ActivityFormScreen extends ConsumerWidget {
   const ActivityFormScreen({super.key, this.id, this.initialDate});
@@ -65,6 +66,8 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
   late ActivityCategory category;
   TimeOfDay? time;
   final tasks = <_TaskDraft>[];
+  final offsets = <int>{};
+  int allDayReminderMinute = 540;
   bool dirty = false;
   bool saving = false;
   String? error;
@@ -74,6 +77,8 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
     super.initState();
     final existing = widget.existing;
     id = existing?.id ?? newId();
+    offsets.addAll(existing?.reminderOffsets ?? []);
+    allDayReminderMinute = existing?.allDayReminderMinute ?? 540;
     title = TextEditingController(text: existing?.title ?? '');
     notes = TextEditingController(text: existing?.notes ?? '');
     date = existing?.date ?? widget.initialDate ?? dateOnly(DateTime.now());
@@ -164,10 +169,13 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
     if (saving || !form.currentState!.validate()) {
       return;
     }
-    final activity = Activity(
+    var activity = Activity(
         id: id,
         title: title.text,
         notes: notes.text,
+        timeZoneId: widget.existing?.timeZoneId,
+        allDayReminderMinute: allDayReminderMinute,
+        reminderOffsets: offsets.toList()..sort(),
         category: category,
         date: date,
         minuteOfDay: time == null ? null : time!.hour * 60 + time!.minute,
@@ -185,7 +193,19 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
       error = null;
     });
     try {
+      final hasChangedReminders = offsets.isNotEmpty || (widget.existing?.reminderOffsets.isNotEmpty ?? false);
+      if (hasChangedReminders) {
+        final service = ref.read(reminderCoordinatorProvider);
+        activity = await service.prepare(activity);
+        if (offsets.isNotEmpty) { await service.gateway.requestNotifications(); }
+      }
       await ref.read(repositoryProvider).save(activity);
+      if (hasChangedReminders) {
+        final service = ref.read(reminderCoordinatorProvider);
+        await service.synchronize();
+        if (mounted) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:
+          Text(service.warning ?? 'Actividad y avisos guardados. Los avisos pasados no se enviarán.'))); }
+      }
       if (!mounted) {
         return;
       }
@@ -197,11 +217,11 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
       if (mounted) {
         context.pop();
       }
-    } catch (_) {
+    } catch (exception) {
       if (mounted) {
         setState(() {
           saving = false;
-          error =
+          error = exception is FormatException ? exception.message :
               'No se pudo guardar. Conservamos tus cambios en el formulario; vuelve a intentarlo.';
         });
       }
@@ -284,6 +304,8 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
                             label: Text(
                                 '${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}')),
                       const SizedBox(height: 20),
+                      reminderEditor(),
+                      const SizedBox(height: 20),
                       TextFormField(
                           controller: notes,
                           enabled: !saving,
@@ -332,6 +354,45 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
                   ))),
         ),
       );
+
+
+  Widget reminderEditor() => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    Text('Avisos', style: Theme.of(context).textTheme.titleMedium),
+    const SizedBox(height: 6),
+    const Text('Elige uno o varios avisos. Requieren permiso de notificaciones.'),
+    Wrap(spacing: 6, children: [
+      for (final offset in ({0, 5, 15, 30, 60, 1440, ...offsets}.toList()..sort()))
+        FilterChip(label: Text(reminderLabel(offset)), selected: offsets.contains(offset),
+          onSelected: saving ? null : (selected) => setState(() {
+            if (selected) { offsets.add(offset); } else { offsets.remove(offset); }
+            dirty = true;
+          })),
+    ]),
+    TextButton.icon(onPressed: saving ? null : addCustomReminder, icon: const Icon(Icons.add_alarm), label: const Text('Otra antelación')),
+    if (offsets.isEmpty) const Text('Sin avisos seleccionados.'),
+    if (offsets.isNotEmpty && time == null) OutlinedButton.icon(icon: const Icon(Icons.schedule),
+      label: Text('Hora del aviso: ${(allDayReminderMinute ~/ 60).toString().padLeft(2, '0')}:${(allDayReminderMinute % 60).toString().padLeft(2, '0')}'),
+      onPressed: saving ? null : () async {
+        final chosen = await showTimePicker(context: context, initialTime: TimeOfDay(hour: allDayReminderMinute ~/ 60, minute: allDayReminderMinute % 60));
+        if (chosen != null && mounted) { setState(() { allDayReminderMinute = chosen.hour * 60 + chosen.minute; dirty = true; }); }
+      }),
+    if (offsets.isNotEmpty) Text(widget.existing?.timeZoneId == null ? 'Se usará la zona horaria de este teléfono al guardar.' : 'Zona de los avisos: ${widget.existing!.timeZoneId}'),
+  ]);
+
+  Future<void> addCustomReminder() async {
+    final controller = TextEditingController();
+    final key = GlobalKey<FormState>();
+    final value = await showDialog<int>(context: context, builder: (context) => AlertDialog(
+      title: const Text('Minutos antes'),
+      content: Form(key: key, child: TextFormField(controller: controller, keyboardType: TextInputType.number,
+        decoration: const InputDecoration(labelText: 'De 0 a 525600 minutos'),
+        validator: (text) { final n = int.tryParse(text ?? ''); return n == null || n < 0 || n > 525600 ? 'Escribe un número válido.' : null; })),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+        FilledButton(onPressed: () { if (key.currentState!.validate()) { Navigator.pop(context, int.parse(controller.text)); } }, child: const Text('Añadir'))]));
+    if (value != null && mounted) { setState(() { offsets.add(value); dirty = true; }); }
+    // El diálogo puede seguir desmontándose después de devolver su resultado.
+    WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+  }
 
   Widget taskEditor(int index) {
     final task = tasks[index];

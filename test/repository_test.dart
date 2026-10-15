@@ -97,7 +97,7 @@ void main() {
               .customSelect('PRAGMA user_version')
               .getSingle()
               .then((r) => r.read<int>('user_version')),
-          1);
+          2);
     } finally {
       await reopened.close();
       await folder.delete(recursive: true);

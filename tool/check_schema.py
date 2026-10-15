@@ -7,14 +7,16 @@ from pathlib import Path
 source = (Path(__file__).resolve().parents[1] / 'lib/core/database/app_database.dart').read_text()
 statements = re.findall(r"customStatement\(\s*'''(CREATE.*?)'''\s*,?\s*\)", source, re.S)
 statements += re.findall(r"customStatement\(\s*'(CREATE INDEX[^']*)'\s*,?\s*\)", source)
-assert len(statements) == 4
+assert len(statements) == 6
+statements += [match[1] for match in re.findall(r"customStatement\(\s*([\"'])(ALTER TABLE .*?)\1\s*,?\s*\)", source)]
+assert len(statements) == 8
 with tempfile.TemporaryDirectory() as folder:
     path = Path(folder) / 'agenda.sqlite'
     db = sqlite3.connect(path)
     db.execute('PRAGMA foreign_keys = ON')
     for statement in statements:
         db.execute(statement)
-    db.execute("INSERT INTO activities VALUES ('a','Reunión','work','2028-02-29',540,'Nota',1,1)")
+    db.execute("INSERT INTO activities (id,title,category,local_date,minute_of_day,notes,created_at,updated_at) VALUES ('a','Reunión','work','2028-02-29',540,'Nota',1,1)")
     db.execute("INSERT INTO task_templates VALUES ('t','a','Preparar',0,1)")
     db.commit()
     db.close()

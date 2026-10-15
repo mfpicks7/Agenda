@@ -1,3 +1,5 @@
+import '../features/reminders/reminder_coordinator.dart';
+import '../features/reminders/notification_gateway.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/database/app_database.dart';
 import '../features/activities/activity.dart';
@@ -11,3 +13,7 @@ final repositoryProvider = Provider<ActivityRepository>((ref) {
 final activitiesProvider = StreamProvider<List<Activity>>(
   (ref) => ref.watch(repositoryProvider).watchAll(),
 );
+
+final notificationGatewayProvider = Provider<NotificationGateway>((ref) => AndroidNotificationGateway());
+final reminderCoordinatorProvider = ChangeNotifierProvider<ReminderCoordinator>((ref) =>
+  ReminderCoordinator(ref.watch(repositoryProvider), ref.watch(notificationGatewayProvider)));

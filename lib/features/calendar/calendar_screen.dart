@@ -55,7 +55,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         bottomNavigationBar: SafeArea(
             top: false,
             minimum: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-            child: FilledButton.icon(
+            child: Row(children: [Expanded(child: FilledButton.icon(
                 key: const ValueKey('new-activity-button'),
                 onPressed: () => context.push('/new?date=${dateKey(selected)}'),
                 style: FilledButton.styleFrom(
@@ -66,6 +66,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         borderRadius: BorderRadius.circular(16))),
                 icon: const Icon(Icons.add),
                 label: const Text('Nueva actividad'))),
+              const SizedBox(width: 8),
+              IconButton.filledTonal(tooltip: 'Avisos', onPressed: () => context.push('/notifications'),
+                icon: Icon(ref.watch(reminderCoordinatorProvider).warning == null ? Icons.notifications_outlined : Icons.notifications_active_outlined)),
+            ])),
         body: SafeArea(
             child: ref.watch(activitiesProvider).when(
                   loading: () =>

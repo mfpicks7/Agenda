@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mi_agenda/app/theme.dart';
 import 'package:mi_agenda/features/calendar/calendar_screen.dart';
 import 'package:mi_agenda/app/app.dart';
+import 'fakes/notification_gateway.dart';
 import 'package:mi_agenda/app/providers.dart';
 import 'package:mi_agenda/core/database/app_database.dart';
 import 'package:mi_agenda/features/activities/activity.dart';
@@ -192,6 +193,36 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.ensureVisible(find.byType(ListTile));
     await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('El formulario guarda y programa avisos con la zona del teléfono', (tester) async {
+    tester.view.physicalSize = const Size(400, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repo = ActivityRepository(AppDatabase(NativeDatabase.memory()));
+    final gateway = FakeGateway();
+    addTearDown(repo.close);
+    agendaRouter.go('/');
+    await tester.pumpWidget(ProviderScope(overrides: [repositoryProvider.overrideWithValue(repo),
+      notificationGatewayProvider.overrideWithValue(gateway)], child: const AgendaApp()));
+    await tester.pumpAndSettle();
+    final tomorrow = dateKey(DateTime.now().add(const Duration(days: 1)));
+    agendaRouter.push('/new?date=$tomorrow');
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).first, 'Con aviso');
+    await tester.ensureVisible(find.text('15 minutos antes'));
+    await tester.tap(find.text('15 minutos antes'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Guardar actividad'));
+    await tester.tap(find.text('Guardar actividad'));
+    await tester.pumpAndSettle();
+    final loaded = (await repo.getAll()).single;
+    expect(loaded.reminderOffsets, [15]);
+    expect(loaded.timeZoneId, 'America/New_York');
+    expect(gateway.scheduled.length, 1);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });

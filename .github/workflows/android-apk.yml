@@ -87,7 +87,9 @@ jobs:
           target: google_apis
           profile: pixel_2
           disable-animations: true
-          script: bash tool/android_smoke.sh entrega/Mi-Agenda-debug.apk
+          script: |
+            bash tool/android_smoke.sh entrega/Mi-Agenda-debug.apk
+            python3 tool/notification_smoke.py
       - name: Vista del calendario en el emulador de prueba
         run: |
           python3 - <<'PYCODE'
