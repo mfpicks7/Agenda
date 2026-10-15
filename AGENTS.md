@@ -23,7 +23,7 @@ Construir **Mi Agenda**, app Android Flutter local-first para organizar activida
 - Comprobar permisos Android antes de avisos exactos, con alternativa clara cuando estén denegados.
 
 ## Diseño aprobado
-- Inicio: calendario mensual comenzando lunes, 7 columnas, texto abreviado en cada día, hasta 2 actividades + `+N`.
+- Inicio (referencia actualizada por el usuario): calendario mensual compacto, comenzando lunes, 7 columnas, sin celdas altas ni títulos dentro de cada día; puntos azules/verdes por categoría. El mes completo debe verse sin desplazar en teléfonos de tamaño normal. Nombres completos en la lista inferior.
 - Trabajo `#2563EB`, Personal `#16A34A`.
 - Seleccionar día -> lista de actividades; tocar actividad -> detalle con notas, pendientes, recordatorios y repetición cuando estén implementados.
 - Botón + -> formulario con título, fecha, hora, categoría y notas/pendientes opcionales; añadir funciones extra por etapas.

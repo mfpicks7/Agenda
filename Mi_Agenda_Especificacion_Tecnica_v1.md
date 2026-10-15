@@ -1,5 +1,7 @@
 # Mi Agenda — Especificación técnica v1.0
 
+> Actualización visual autorizada por el usuario: la referencia 15258.jpg sustituye el diseño de celdas con títulos. El calendario será compacto y mostrará el mes completo con puntos por categoría, selección con borde azul, cabecera dentro de una tarjeta y actividades detalladas debajo. Los requisitos anteriores de títulos dentro de celdas y +N quedan reemplazados por esta referencia. Se conservan datos, CRUD, categorías y filtros; el botón de crear no debe cubrir el calendario.
+
 **Proyecto:** Mi Agenda (independiente de Mi Finanzas IA)
 **Estado:** diseño UI/UX aprobado; arquitectura propuesta; desarrollo aún no iniciado.
 **Plataforma inicial:** Android; enfoque local-first y sin conexión obligatoria.
