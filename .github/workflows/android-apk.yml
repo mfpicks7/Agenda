@@ -52,7 +52,7 @@ jobs:
         run: |
           mkdir -p entrega
           cp pubspec.lock entrega/pubspec.lock
-          sha256sum entrega/Mi-Agenda-debug.apk > entrega/SHA256SUMS.txt
+          sha256sum entrega/*.apk > entrega/SHA256SUMS.txt
           flutter --version > entrega/FLUTTER_VERSION.txt
           git ls-files -z -- lib test android pubspec.yaml analysis_options.yaml tool .github README.md VERIFICACION.md > /tmp/mi-agenda-sources
           tar --null -T /tmp/mi-agenda-sources -czf entrega/codigo-verificado.tar.gz pubspec.lock
@@ -60,6 +60,12 @@ jobs:
         with:
           name: Mi-Agenda-APK-debug
           path: entrega/
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mi-Agenda-Recuperacion
+          path: entrega/Mi-Agenda-Recuperacion.apk
           if-no-files-found: error
           retention-days: 14
 
