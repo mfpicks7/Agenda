@@ -104,8 +104,12 @@ void main() {
     restarted.dispose();
   });
   test('Normaliza GMT a IANA sin sustituir zonas desconocidas', () async {
-    gateway.zone = 'GMT';
-    expect((await service.prepare(event(zone: null))).timeZoneId, 'Etc/UTC');
+    for (final alias in ['GMT', 'UTC', 'Etc/UTC', 'Etc/GMT']) {
+      expect(reminderLocation(alias), tz.UTC);
+      expect(resolveCivil(event(zone: alias)).location, tz.UTC);
+    }
+    gateway.zone = 'Etc/UTC';
+    expect((await service.prepare(event(zone: null))).timeZoneId, 'UTC');
     final invalid = FakeGateway()..zone = 'Invalid/Unknown';
     final broken = ReminderCoordinator(repo, invalid);
     await expectLater(broken.prepare(event(zone: null)), throwsA(anything));

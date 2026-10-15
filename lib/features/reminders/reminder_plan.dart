@@ -1,6 +1,12 @@
 import 'package:timezone/timezone.dart' as tz;
 import '../activities/activity.dart';
 
+String canonicalReminderZone(String zone) =>
+    const {'UTC', 'GMT', 'Etc/UTC', 'Etc/GMT', 'UCT', 'Etc/UCT', 'Universal', 'Zulu'}.contains(zone) ? 'UTC' : zone;
+
+tz.Location reminderLocation(String zone) =>
+    canonicalReminderZone(zone) == 'UTC' ? tz.UTC : tz.getLocation(zone);
+
 String reminderLabel(int minutes) {
   if (minutes == 0) { return 'Al comenzar'; }
   if (minutes % 1440 == 0) { return '${minutes ~/ 1440} día(s) antes'; }
@@ -21,7 +27,7 @@ class PlannedReminder {
 tz.TZDateTime resolveCivil(Activity activity) {
   final zone = activity.timeZoneId;
   if (zone == null) { throw const FormatException('Falta la zona horaria del aviso.'); }
-  final location = tz.getLocation(zone);
+  final location = reminderLocation(zone);
   final minute = activity.minuteOfDay ?? activity.allDayReminderMinute;
   final civil = DateTime.utc(activity.date.year, activity.date.month, activity.date.day, minute ~/ 60, minute % 60);
   final offsets = <int>{};

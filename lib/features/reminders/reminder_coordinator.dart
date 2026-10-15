@@ -29,8 +29,8 @@ class ReminderCoordinator extends ChangeNotifier {
       tzdata.initializeTimeZones();
       await gateway.initialize((id) => onTap?.call(id));
       final nativeZone = await gateway.deviceTimeZone();
-      deviceZone = nativeZone == 'GMT' || nativeZone == 'UTC' ? 'Etc/UTC' : nativeZone;
-      tz.getLocation(deviceZone!); // No sustituir silenciosamente una zona desconocida por UTC.
+      deviceZone = canonicalReminderZone(nativeZone);
+      reminderLocation(deviceZone!); // No sustituir silenciosamente una zona desconocida por UTC.
       initialized = true;
     } catch (_) {
       _initializing = null;
@@ -135,7 +135,7 @@ class ReminderCoordinator extends ChangeNotifier {
     if (!permission.enabled || !permission.exact) {
       throw StateError('Permite notificaciones y precisión para la prueba de 10 segundos.');
     }
-    final time = tz.TZDateTime.from(clock().add(const Duration(seconds: 10)), tz.getLocation(deviceZone!));
+    final time = tz.TZDateTime.from(clock().add(const Duration(seconds: 10)), reminderLocation(deviceZone!));
     await gateway.schedule(0, 'Aviso programado de prueba', 'La programación local de Mi Agenda funciona.', null, time, true);
   }
 
