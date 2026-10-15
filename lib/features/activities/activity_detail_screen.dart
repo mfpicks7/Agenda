@@ -22,9 +22,9 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
     try {
       await ref.read(repositoryProvider).setTaskDone(widget.id, task.id, value);
     } catch (_) {
-      if (mounted) setState(() => error = 'No se pudo guardar el pendiente. Inténtalo de nuevo.');
+      if (mounted) { setState(() => error = 'No se pudo guardar el pendiente. Inténtalo de nuevo.'); }
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted) { setState(() => busy = false); }
     }
   }
 
@@ -35,15 +35,15 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
       actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancelar')),
         FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Eliminar'))],
     ));
-    if (confirmed != true || !mounted) return;
+    if (confirmed != true || !mounted) { return; }
     setState(() { busy = true; error = null; });
     try {
       await ref.read(repositoryProvider).delete(widget.id);
-      if (mounted) context.go('/');
+      if (mounted) { context.go('/'); }
     } catch (_) {
-      if (mounted) setState(() => error = 'No se pudo eliminar la actividad. Inténtalo de nuevo.');
+      if (mounted) { setState(() => error = 'No se pudo eliminar la actividad. Inténtalo de nuevo.'); }
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted) { setState(() => busy = false); }
     }
   }
 
@@ -52,10 +52,10 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
     appBar: AppBar(title: const Text('Detalle de actividad')),
     body: ref.watch(activitiesProvider).when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, _) => Center(child: TextButton(onPressed: () => ref.invalidate(activitiesProvider), child: const Text('Reintentar cargar la actividad'))),
+      error: (_, unused) => Center(child: TextButton(onPressed: () => ref.invalidate(activitiesProvider), child: const Text('Reintentar cargar la actividad'))),
       data: (all) {
         final matches = all.where((a) => a.id == widget.id);
-        if (matches.isEmpty) return const Center(child: Text('Esta actividad ya no está disponible.'));
+        if (matches.isEmpty) { return const Center(child: Text('Esta actividad ya no está disponible.')); }
         final activity = matches.first;
         return ListView(padding: const EdgeInsets.all(20), children: [
           Text(activity.title, style: Theme.of(context).textTheme.headlineMedium),

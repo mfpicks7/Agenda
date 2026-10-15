@@ -7,7 +7,7 @@ import '../features/calendar/calendar_screen.dart';
 import 'theme.dart';
 
 final agendaRouter = GoRouter(routes: [
-  GoRoute(path: '/', builder: (_, _) => const CalendarScreen()),
+  GoRoute(path: '/', builder: (_, unused) => const CalendarScreen()),
   GoRoute(path: '/new', builder: (_, state) => ActivityFormScreen(
     initialDate: DateTime.tryParse(state.uri.queryParameters['date'] ?? ''),
   )),

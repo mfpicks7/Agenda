@@ -2,6 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 command -v flutter >/dev/null || { echo 'Instala Flutter estable y añádelo al PATH.' >&2; exit 1; }
+flutter config --no-analytics
+dart --disable-analytics
 # Usa la plantilla oficial solo en un directorio temporal. No regenera la app.
 agenda_temp="$(mktemp -d)"
 trap 'rm -rf "$agenda_temp"' EXIT

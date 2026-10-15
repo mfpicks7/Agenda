@@ -12,15 +12,15 @@ class ActivityFormScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (id == null) return _ActivityEditor(initialDate: initialDate);
+    if (id == null) { return _ActivityEditor(initialDate: initialDate); }
     return ref.watch(activitiesProvider).when(
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (_, _) => Scaffold(appBar: AppBar(title: const Text('Editar actividad')),
+      error: (_, unused) => Scaffold(appBar: AppBar(title: const Text('Editar actividad')),
         body: Center(child: TextButton(onPressed: () => ref.invalidate(activitiesProvider), child: const Text('Reintentar cargar')))),
       data: (all) {
         final matches = all.where((a) => a.id == id);
-        if (matches.isEmpty) return Scaffold(appBar: AppBar(title: const Text('Editar actividad')),
-          body: const Center(child: Text('La actividad ya no está disponible.')));
+        if (matches.isEmpty) { return Scaffold(appBar: AppBar(title: const Text('Editar actividad')),
+          body: const Center(child: Text('La actividad ya no está disponible.'))); }
         return _ActivityEditor(key: ValueKey(id), existing: matches.first);
       },
     );
@@ -78,36 +78,36 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
     super.dispose();
   }
 
-  void changed() { if (!dirty) setState(() => dirty = true); }
+  void changed() { if (!dirty) { setState(() => dirty = true); } }
 
   Future<void> pickDate() async {
     final picked = await showDatePicker(context: context, initialDate: date,
       firstDate: DateTime(1900), lastDate: DateTime(2100, 12, 31));
-    if (picked != null && mounted) setState(() { date = picked; dirty = true; });
+    if (picked != null && mounted) { setState(() { date = picked; dirty = true; }); }
   }
 
   Future<void> pickTime() async {
     final picked = await showTimePicker(context: context, initialTime: time ?? const TimeOfDay(hour: 9, minute: 0),
       builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child!));
-    if (picked != null && mounted) setState(() { time = picked; dirty = true; });
+    if (picked != null && mounted) { setState(() { time = picked; dirty = true; }); }
   }
 
   Future<void> leave() async {
-    if (saving) return;
+    if (saving) { return; }
     final discard = await showDialog<bool>(context: context, builder: (context) => AlertDialog(
       title: const Text('¿Descartar cambios?'),
       content: const Text('Los cambios de este formulario todavía no se han guardado.'),
       actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Seguir editando')),
         TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Descartar'))],
     ));
-    if (discard != true || !mounted) return;
+    if (discard != true || !mounted) { return; }
     setState(() => dirty = false);
     await WidgetsBinding.instance.endOfFrame;
-    if (mounted) context.pop();
+    if (mounted) { context.pop(); }
   }
 
   Future<void> save() async {
-    if (saving || !form.currentState!.validate()) return;
+    if (saving || !form.currentState!.validate()) { return; }
     final activity = Activity(id: id, title: title.text, notes: notes.text, category: category,
       date: date, minuteOfDay: time == null ? null : time!.hour * 60 + time!.minute,
       tasks: tasks.map((t) => AgendaTask(id: t.id, description: t.controller.text, isDone: t.done)).toList());
@@ -116,12 +116,12 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
     setState(() { saving = true; error = null; });
     try {
       await ref.read(repositoryProvider).save(activity);
-      if (!mounted) return;
+      if (!mounted) { return; }
       setState(() { dirty = false; saving = false; });
       await WidgetsBinding.instance.endOfFrame;
-      if (mounted) context.pop();
+      if (mounted) { context.pop(); }
     } catch (_) {
-      if (mounted) setState(() { saving = false; error = 'No se pudo guardar. Conservamos tus cambios en el formulario; vuelve a intentarlo.'; });
+      if (mounted) { setState(() { saving = false; error = 'No se pudo guardar. Conservamos tus cambios en el formulario; vuelve a intentarlo.'; }); }
     }
   }
 
@@ -133,7 +133,7 @@ class _ActivityEditorState extends ConsumerState<_ActivityEditor> {
   @override
   Widget build(BuildContext context) => PopScope(
     canPop: !dirty && !saving,
-    onPopInvokedWithResult: (didPop, _) { if (!didPop && !saving) leave(); },
+    onPopInvokedWithResult: (didPop, _) { if (!didPop && !saving) { leave(); } },
     child: Scaffold(
       appBar: AppBar(title: Text(widget.existing == null ? 'Nueva actividad' : 'Editar actividad')),
       body: SafeArea(child: Form(key: form, child: ListView(

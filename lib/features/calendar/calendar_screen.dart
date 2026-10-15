@@ -25,7 +25,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   void move(int delta) {
     final next = DateTime(month.year, month.month + delta);
-    if (next.year < 1900 || next.year > 2100) return;
+    if (next.year < 1900 || next.year > 2100) { return; }
     select(next);
   }
 
@@ -42,7 +42,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       ),
       body: SafeArea(child: data.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(
+        error: (_, unused) => Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [const Text('No pudimos leer la agenda. Tus datos no se han borrado.'),
             TextButton(onPressed: () => ref.invalidate(activitiesProvider), child: const Text('Reintentar'))],

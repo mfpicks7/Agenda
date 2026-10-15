@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 // Drift con SQL explícito: no necesita archivos generados ni build_runner.
 // SQLite y Drift son la fuente de verdad; todas las escrituras pasan por el repositorio.
 class AppDatabase extends GeneratedDatabase {
-  AppDatabase(QueryExecutor executor) : super(executor);
+  AppDatabase(super.executor);
 
   factory AppDatabase.device() => AppDatabase(LazyDatabase(() async {
         final folder = await getApplicationSupportDirectory();

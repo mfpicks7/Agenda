@@ -29,8 +29,8 @@ class MonthGrid extends StatelessWidget {
     final scale = MediaQuery.textScalerOf(context).scale(12) / 12;
     final height = 112.0 + (scale - 1).clamp(0, 3) * 78;
     return Column(children: [
-      const Row(children: [
-        for (final day in ['L', 'M', 'X', 'J', 'V', 'S', 'D'])
+      Row(children: [
+        for (final day in const ['L', 'M', 'X', 'J', 'V', 'S', 'D'])
           Expanded(child: Padding(padding: EdgeInsets.symmetric(vertical: 12),
             child: Text(day, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)))),
       ]),

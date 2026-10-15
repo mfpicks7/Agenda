@@ -52,8 +52,8 @@ class Activity {
       : '${(minuteOfDay! ~/ 60).toString().padLeft(2, '0')}:${(minuteOfDay! % 60).toString().padLeft(2, '0')}';
 
   String? validate() {
-    if (title.trim().isEmpty) return 'Escribe un título.';
-    if (date.year < 1900 || date.year > 2100) return 'La fecha debe estar entre 1900 y 2100.';
+    if (title.trim().isEmpty) { return 'Escribe un título.'; }
+    if (date.year < 1900 || date.year > 2100) { return 'La fecha debe estar entre 1900 y 2100.'; }
     if (minuteOfDay != null && (minuteOfDay! < 0 || minuteOfDay! >= 1440)) {
       return 'Selecciona una hora válida.';
     }
