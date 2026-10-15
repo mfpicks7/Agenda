@@ -1,0 +1,15 @@
+MI AGENDA — KIT INICIAL PARA CODEX
+
+Contenido
+- Mi_Agenda_Especificacion_Tecnica_v1.md: requisitos y arquitectura.
+- AGENTS.md: reglas permanentes de trabajo para Codex.
+- Codex_01_Mi_Agenda_Base_Funcional.md: primera instrucción lista para copiar a Codex.
+
+Cómo usar
+1. Crea una carpeta exclusiva para el proyecto Mi Agenda (no utilizar Mi Finanzas IA).
+2. Copia a la raíz de esa carpeta los archivos AGENTS.md y Mi_Agenda_Especificacion_Tecnica_v1.md.
+3. Abre esa carpeta en Codex.
+4. Copia el contenido de Codex_01_Mi_Agenda_Base_Funcional.md y úsalo como primera instrucción.
+5. Al terminar, revisa el reporte real de archivos, pruebas y compilación antes de avanzar a Entrega 2.
+
+IMPORTANTE: Este ZIP no incluye código de aplicación ni APK. Son documentos de preparación.
