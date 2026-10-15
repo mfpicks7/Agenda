@@ -8,25 +8,34 @@ import 'theme.dart';
 
 final agendaRouter = GoRouter(routes: [
   GoRoute(path: '/', builder: (_, unused) => const CalendarScreen()),
-  GoRoute(path: '/new', builder: (_, state) => ActivityFormScreen(
-    initialDate: DateTime.tryParse(state.uri.queryParameters['date'] ?? ''),
-  )),
-  GoRoute(path: '/activity/:id', builder: (_, state) => ActivityDetailScreen(id: state.pathParameters['id']!)),
-  GoRoute(path: '/activity/:id/edit', builder: (_, state) => ActivityFormScreen(id: state.pathParameters['id']!)),
+  GoRoute(
+      path: '/new',
+      builder: (_, state) => ActivityFormScreen(
+            initialDate:
+                DateTime.tryParse(state.uri.queryParameters['date'] ?? ''),
+          )),
+  GoRoute(
+      path: '/activity/:id',
+      builder: (_, state) =>
+          ActivityDetailScreen(id: state.pathParameters['id']!)),
+  GoRoute(
+      path: '/activity/:id/edit',
+      builder: (_, state) =>
+          ActivityFormScreen(id: state.pathParameters['id']!)),
 ]);
 
 class AgendaApp extends StatelessWidget {
   const AgendaApp({super.key});
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    title: 'Mi Agenda',
-    debugShowCheckedModeBanner: false,
-    locale: const Locale('es'),
-    supportedLocales: const [Locale('es')],
-    localizationsDelegates: GlobalMaterialLocalizations.delegates,
-    theme: agendaTheme(Brightness.light),
-    darkTheme: agendaTheme(Brightness.dark),
-    themeMode: ThemeMode.light,
-    routerConfig: agendaRouter,
-  );
+        title: 'Mi Agenda',
+        debugShowCheckedModeBanner: false,
+        locale: const Locale('es'),
+        supportedLocales: const [Locale('es')],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        theme: agendaTheme(Brightness.light),
+        darkTheme: agendaTheme(Brightness.dark),
+        themeMode: ThemeMode.light,
+        routerConfig: agendaRouter,
+      );
 }

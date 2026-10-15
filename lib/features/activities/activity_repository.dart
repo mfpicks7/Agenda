@@ -21,29 +21,38 @@ class ActivityRepository {
 
   Future<List<Activity>> getAll() async {
     return db.transaction(() async {
-      final rows = await db.customSelect(
-        'SELECT * FROM activities ORDER BY local_date, COALESCE(minute_of_day, -1), created_at, id',
-      ).get();
-      final taskRows = await db.customSelect(
-        'SELECT * FROM task_templates ORDER BY sort_order, id',
-      ).get();
+      final rows = await db
+          .customSelect(
+            'SELECT * FROM activities ORDER BY local_date, COALESCE(minute_of_day, -1), created_at, id',
+          )
+          .get();
+      final taskRows = await db
+          .customSelect(
+            'SELECT * FROM task_templates ORDER BY sort_order, id',
+          )
+          .get();
       final tasks = <String, List<AgendaTask>>{};
       for (final row in taskRows) {
-        tasks.putIfAbsent(row.read<String>('activity_id'), () => []).add(AgendaTask(
+        tasks
+            .putIfAbsent(row.read<String>('activity_id'), () => [])
+            .add(AgendaTask(
               id: row.read<String>('id'),
               description: row.read<String>('description'),
               isDone: row.read<int>('is_done') == 1,
             ));
       }
-      return rows.map((row) => Activity(
-            id: row.read<String>('id'),
-            title: row.read<String>('title'),
-            category: ActivityCategory.values.byName(row.read<String>('category')),
-            date: DateTime.parse(row.read<String>('local_date')),
-            minuteOfDay: row.readNullable<int>('minute_of_day'),
-            notes: row.read<String>('notes'),
-            tasks: tasks[row.read<String>('id')] ?? [],
-          )).toList();
+      return rows
+          .map((row) => Activity(
+                id: row.read<String>('id'),
+                title: row.read<String>('title'),
+                category: ActivityCategory.values
+                    .byName(row.read<String>('category')),
+                date: DateTime.parse(row.read<String>('local_date')),
+                minuteOfDay: row.readNullable<int>('minute_of_day'),
+                notes: row.read<String>('notes'),
+                tasks: tasks[row.read<String>('id')] ?? [],
+              ))
+          .toList();
     });
   }
 
@@ -59,15 +68,29 @@ class ActivityRepository {
         category=excluded.category, local_date=excluded.local_date,
         minute_of_day=excluded.minute_of_day, notes=excluded.notes,
         updated_at=excluded.updated_at''', [
-        activity.id, activity.title.trim(), activity.category.name,
-        dateKey(activity.date), activity.minuteOfDay, activity.notes, now, now,
+        activity.id,
+        activity.title.trim(),
+        activity.category.name,
+        dateKey(activity.date),
+        activity.minuteOfDay,
+        activity.notes,
+        now,
+        now,
       ]);
-      await db.customStatement('DELETE FROM task_templates WHERE activity_id = ?', [activity.id]);
+      await db.customStatement(
+          'DELETE FROM task_templates WHERE activity_id = ?', [activity.id]);
       for (var i = 0; i < activity.tasks.length; i++) {
         final task = activity.tasks[i];
-        await db.customStatement('''INSERT INTO task_templates
+        await db.customStatement(
+            '''INSERT INTO task_templates
           (id, activity_id, description, sort_order, is_done) VALUES (?, ?, ?, ?, ?)''',
-          [task.id, activity.id, task.description.trim(), i, task.isDone ? 1 : 0]);
+            [
+              task.id,
+              activity.id,
+              task.description.trim(),
+              i,
+              task.isDone ? 1 : 0
+            ]);
       }
     });
     _changes.add(null);

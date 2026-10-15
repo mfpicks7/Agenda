@@ -10,8 +10,12 @@ import 'package:mi_agenda/features/activities/activity.dart';
 import 'package:mi_agenda/features/activities/activity_repository.dart';
 
 void main() {
-  setUpAll(() async { await initializeDateFormatting('es'); });
-  testWidgets('Crear con validación, detalle, checklist, editar y eliminar con confirmación', (tester) async {
+  setUpAll(() async {
+    await initializeDateFormatting('es');
+  });
+  testWidgets(
+      'Crear con validación, detalle, checklist, editar y eliminar con confirmación',
+      (tester) async {
     tester.view.physicalSize = const Size(400, 1800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -19,7 +23,9 @@ void main() {
     final repo = ActivityRepository(AppDatabase(NativeDatabase.memory()));
     addTearDown(repo.close);
     agendaRouter.go('/');
-    await tester.pumpWidget(ProviderScope(overrides: [repositoryProvider.overrideWithValue(repo)], child: const AgendaApp()));
+    await tester.pumpWidget(ProviderScope(
+        overrides: [repositoryProvider.overrideWithValue(repo)],
+        child: const AgendaApp()));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Nueva actividad'));
     await tester.pumpAndSettle();
@@ -28,12 +34,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Escribe un título.'), findsOneWidget);
     await tester.ensureVisible(find.byType(TextFormField).first);
-    await tester.enterText(find.byType(TextFormField).first, 'Revisar proyecto');
+    await tester.enterText(
+        find.byType(TextFormField).first, 'Revisar proyecto');
     await tester.enterText(find.byType(TextFormField).at(1), 'Nota persistida');
     await tester.ensureVisible(find.text('Añadir pendiente'));
     await tester.tap(find.text('Añadir pendiente'));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextFormField).at(2), 'Preparar entrega');
+    await tester.enterText(
+        find.byType(TextFormField).at(2), 'Preparar entrega');
     await tester.ensureVisible(find.text('Guardar actividad'));
     await tester.tap(find.text('Guardar actividad'));
     await tester.pumpAndSettle();
@@ -47,7 +55,8 @@ void main() {
     await tester.ensureVisible(find.text('Editar actividad'));
     await tester.tap(find.text('Editar actividad'));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextFormField).first, 'Proyecto revisado');
+    await tester.enterText(
+        find.byType(TextFormField).first, 'Proyecto revisado');
     await tester.ensureVisible(find.text('Guardar actividad'));
     await tester.tap(find.text('Guardar actividad'));
     await tester.pumpAndSettle();
@@ -67,7 +76,8 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('Tres actividades, filtros y navegación de meses', (tester) async {
+  testWidgets('Tres actividades, filtros y navegación de meses',
+      (tester) async {
     tester.view.physicalSize = const Size(400, 1800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -75,11 +85,17 @@ void main() {
     final repo = ActivityRepository(AppDatabase(NativeDatabase.memory()));
     addTearDown(repo.close);
     for (var i = 0; i < 3; i++) {
-      await repo.save(Activity(id: '$i', title: 'Actividad $i', category: i == 0 ? ActivityCategory.work : ActivityCategory.personal,
-        date: DateTime.now(), minuteOfDay: 600 + i));
+      await repo.save(Activity(
+          id: '$i',
+          title: 'Actividad $i',
+          category: i == 0 ? ActivityCategory.work : ActivityCategory.personal,
+          date: DateTime.now(),
+          minuteOfDay: 600 + i));
     }
     agendaRouter.go('/');
-    await tester.pumpWidget(ProviderScope(overrides: [repositoryProvider.overrideWithValue(repo)], child: const AgendaApp()));
+    await tester.pumpWidget(ProviderScope(
+        overrides: [repositoryProvider.overrideWithValue(repo)],
+        child: const AgendaApp()));
     await tester.pumpAndSettle();
     expect(find.text('+1'), findsOneWidget);
     expect(find.byType(ListTile), findsNWidgets(3));

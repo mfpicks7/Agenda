@@ -11,7 +11,8 @@ class AppDatabase extends GeneratedDatabase {
 
   factory AppDatabase.device() => AppDatabase(LazyDatabase(() async {
         final folder = await getApplicationSupportDirectory();
-        return NativeDatabase.createInBackground(File(p.join(folder.path, 'mi_agenda.sqlite')));
+        return NativeDatabase.createInBackground(
+            File(p.join(folder.path, 'mi_agenda.sqlite')));
       }));
 
   @override
@@ -43,12 +44,15 @@ class AppDatabase extends GeneratedDatabase {
             sort_order INTEGER NOT NULL,
             is_done INTEGER NOT NULL DEFAULT 0 CHECK(is_done IN (0, 1))
           )''');
-          await customStatement('CREATE INDEX activities_date_category ON activities(local_date, category)');
-          await customStatement('CREATE INDEX tasks_activity_order ON task_templates(activity_id, sort_order)');
+          await customStatement(
+              'CREATE INDEX activities_date_category ON activities(local_date, category)');
+          await customStatement(
+              'CREATE INDEX tasks_activity_order ON task_templates(activity_id, sort_order)');
         },
         beforeOpen: (_) async => customStatement('PRAGMA foreign_keys = ON'),
         onUpgrade: (_, from, to) async {
-          throw StateError('Migración de base de datos no disponible: $from → $to.');
+          throw StateError(
+              'Migración de base de datos no disponible: $from → $to.');
         },
       );
 }

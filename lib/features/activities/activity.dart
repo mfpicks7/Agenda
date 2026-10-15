@@ -14,7 +14,8 @@ DateTime dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
 String newId() => const Uuid().v4();
 
 class AgendaTask {
-  const AgendaTask({required this.id, required this.description, this.isDone = false});
+  const AgendaTask(
+      {required this.id, required this.description, this.isDone = false});
   final String id;
   final String description;
   final bool isDone;
@@ -35,7 +36,8 @@ class Activity {
     this.minuteOfDay,
     this.notes = '',
     List<AgendaTask> tasks = const [],
-  }) : date = dateOnly(date), tasks = List.unmodifiable(tasks);
+  })  : date = dateOnly(date),
+        tasks = List.unmodifiable(tasks);
 
   final String id;
   final String title;
@@ -52,8 +54,12 @@ class Activity {
       : '${(minuteOfDay! ~/ 60).toString().padLeft(2, '0')}:${(minuteOfDay! % 60).toString().padLeft(2, '0')}';
 
   String? validate() {
-    if (title.trim().isEmpty) { return 'Escribe un título.'; }
-    if (date.year < 1900 || date.year > 2100) { return 'La fecha debe estar entre 1900 y 2100.'; }
+    if (title.trim().isEmpty) {
+      return 'Escribe un título.';
+    }
+    if (date.year < 1900 || date.year > 2100) {
+      return 'La fecha debe estar entre 1900 y 2100.';
+    }
     if (minuteOfDay != null && (minuteOfDay! < 0 || minuteOfDay! >= 1440)) {
       return 'Selecciona una hora válida.';
     }
