@@ -88,6 +88,17 @@ jobs:
           profile: pixel_2
           disable-animations: true
           script: bash tool/android_smoke.sh entrega/Mi-Agenda-debug.apk
+      - name: Vista del calendario en el emulador de prueba
+        run: |
+          python3 - <<'PYCODE'
+          import base64
+          from pathlib import Path
+          content = base64.b64encode(Path('smoke-results/reapertura.png').read_bytes()).decode()
+          print('CALENDAR_PREVIEW_BEGIN')
+          for offset in range(0, len(content), 4096):
+              print(content[offset:offset + 4096])
+          print('CALENDAR_PREVIEW_END')
+          PYCODE
       - uses: actions/upload-artifact@v4
         if: always()
         with:

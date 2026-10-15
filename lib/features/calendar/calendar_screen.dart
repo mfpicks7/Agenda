@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -40,7 +41,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
+    value: const SystemUiOverlayStyle(statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark, systemNavigationBarColor: Color(0xFFF8F9FA),
+      systemNavigationBarIconBrightness: Brightness.dark),
+    child: Scaffold(
     backgroundColor: const Color(0xFFF8F9FA),
     bottomNavigationBar: SafeArea(top: false, minimum: const EdgeInsets.fromLTRB(20, 8, 20, 12),
       child: FilledButton.icon(key: const ValueKey('new-activity-button'), onPressed: () => context.push('/new?date=${dateKey(selected)}'),
@@ -89,7 +94,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         });
       },
     )),
-  );
+  ));
 
   Widget _header(BuildContext context) {
     final label = _capitalized(DateFormat('MMMM yyyy', 'es').format(month));

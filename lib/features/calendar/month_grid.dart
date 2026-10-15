@@ -65,9 +65,10 @@ class MonthGrid extends StatelessWidget {
           side: BorderSide(color: active ? const Color(0xFF5F83C4) : Colors.transparent, width: 1.2)),
         child: InkWell(borderRadius: BorderRadius.circular(10), onTap: () => onSelected(day),
           child: ExcludeSemantics(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text('${day.day}', style: TextStyle(fontSize: 16, height: 1.15,
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 2), child: FittedBox(fit: BoxFit.scaleDown,
+              child: Text('${day.day}', maxLines: 1, softWrap: false, style: TextStyle(fontSize: 16, height: 1.15,
               fontWeight: active || today ? FontWeight.w700 : FontWeight.w400,
-              color: today && !active ? workColor : const Color(0xFF1D2125))),
+              color: today && !active ? workColor : const Color(0xFF1D2125))))),
             const SizedBox(height: 7),
             SizedBox(height: 6, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               for (final category in categories) Padding(padding: const EdgeInsets.symmetric(horizontal: 2),
