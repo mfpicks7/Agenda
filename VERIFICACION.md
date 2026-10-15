@@ -1,3 +1,23 @@
+# Actualización 1.1.0 — recordatorios locales
+
+- Versión `1.1.0+4`, paquete independiente `com.miagenda.local`.
+- [Ejecución completa correcta](https://github.com/mfpicks7/Agenda/actions/runs/38797587112), commit `ed4dc1ff2d657a0c7d5fc19603e6a14ebc2a4948`.
+- [Descargar APK 1.1.0](https://github.com/mfpicks7/Agenda/actions/runs/38797587112/artifacts/12002393972). El ZIP contiene `Mi-Agenda-debug.apk`.
+- Recordatorios múltiples por actividad (hasta ocho), hora para todo el día, anticipos personalizados y detalle de avisos. Las actividades anteriores empiezan sin recordatorios.
+- SQLite versión 2: migración sin pérdida de notas ni estados de tareas; guardado transaccional de actividad, tareas y recordatorios. Registro de IDs estables para reprogramar y cancelar.
+- Zona IANA del teléfono; tratamiento explícito de UTC/GMT y sus alias. Horas civiles inexistentes rechazadas y horas repetidas resueltas al primer instante. Los avisos pasados se omiten.
+- Notificaciones locales Android con canal, sonido/vibración, permisos POST_NOTIFICATIONS y SCHEDULE_EXACT_ALARM, alternativa inexacta explícita y receptores de reinicio/actualización. Sin permiso INTERNET.
+- Pantalla Avisos: estado real de permisos, cantidad programada, prueba inmediata, prueba programada en diez segundos, acceso a ajustes y resincronización. Tocar una notificación de actividad abre su detalle.
+- Análisis Flutter sin incidencias y **31 pruebas correctas**: conversión horaria/DST, alias UTC, anticipos, persistencia, migración desde versión 1, IDs estables, edición/eliminación, denegación/restauración de permisos, alternativa inexacta, errores de programación y recuperación de avisos huérfanos, además de los casos existentes de calendario y CRUD.
+
+Prueba nativa en emulador Android 35: instalación, arranque y reapertura correctos; aviso inmediato recibido; aviso programado a diez segundos recibido después de salir al inicio y ejecutar `am kill`; permiso de notificaciones revocado y estado bloqueado comprobado en pantalla; permiso restaurado y precisión denegada con estado aproximado comprobado. Finalmente se restauró la precisión y se abrió de nuevo el calendario. Captura real revisada: octubre completo visible y campana junto al botón de crear. No se afirma haber probado el teléfono físico ni haber verificado que `am kill` terminara el proceso; la recepción en segundo plano sí quedó comprobada.
+
+La comprobación automática de permisos está reservada al emulador desechable de GitHub Actions. No se ejecuta sobre el teléfono del usuario ni borra datos. El código incluye restauración de alarmas mediante el receptor de arranque del plugin; aún no se ha probado la entrega tras un reinicio físico, Doze prolongado ni restricciones de fabricantes. La recurrencia permanece pendiente. La firma debug temporal puede impedir actualizar una APK anterior; no desinstalar si hay datos importantes.
+
+Se conserva debajo el historial de entregas anteriores.
+
+---
+
 # Actualización 1.0.2 — mes completo y referencia visual
 
 - [Ejecución verificada](https://github.com/mfpicks7/Agenda/actions/runs/38751233453), commit `32f300e5d0344e44f8b8e6f0ace300a7a36d2b86`.
