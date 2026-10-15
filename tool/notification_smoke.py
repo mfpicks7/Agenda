@@ -26,7 +26,7 @@ def screen():
 
 
 def find_control(label, click=False):
-    for _ in range(6):
+    for attempt in range(8):
         tree = screen()
         nodes = []
         for node in tree.iter('node'):
@@ -45,14 +45,20 @@ def find_control(label, click=False):
                 adb('shell', 'input', 'tap', str((x1+x2)//2), str((y1+y2)//2))
                 time.sleep(1)
             return attributes
-        adb('shell', 'input', 'swipe', '540', '1600', '540', '600', '400')
+        if attempt >= 2 and not label.startswith(('Notificaciones', 'Horario aproximado')):
+            adb('shell', 'input', 'swipe', '540', '1600', '540', '600', '400')
         time.sleep(1)
+    (OUT / 'avisos-fallo.png').write_bytes(subprocess.check_output(['adb', 'exec-out', 'screencap', '-p']))
+    print((OUT / 'avisos-ui.xml').read_text(), flush=True)
+    print(adb('shell', 'dumpsys', 'activity', 'activities')[-12000:], flush=True)
     raise AssertionError('No se encontró: ' + label)
 
 
 def open_settings():
-    adb('shell', 'am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'miagenda://app/notifications', PACKAGE)
-    time.sleep(3)
+    print(adb('shell', 'am', 'start', '-W', '-a', 'android.intent.action.VIEW', '-d', 'miagenda://app/notifications', '-p', PACKAGE), flush=True)
+    time.sleep(4)
+    adb('shell', 'input', 'swipe', '540', '500', '540', '1700', '400')
+    time.sleep(1)
 
 
 def notification_contains(title, timeout=35):

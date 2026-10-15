@@ -91,11 +91,17 @@ jobs:
             bash tool/android_smoke.sh entrega/Mi-Agenda-debug.apk
             python3 tool/notification_smoke.py
       - name: Vista del calendario en el emulador de prueba
+        if: always()
         run: |
           python3 - <<'PYCODE'
           import base64
           from pathlib import Path
-          content = base64.b64encode(Path('smoke-results/reapertura.png').read_bytes()).decode()
+          path = Path('smoke-results/avisos-fallo.png')
+          if not path.exists():
+              path = Path('smoke-results/reapertura.png')
+          if not path.exists():
+              raise SystemExit(0)
+          content = base64.b64encode(path.read_bytes()).decode()
           print('CALENDAR_PREVIEW_BEGIN')
           for offset in range(0, len(content), 4096):
               print(content[offset:offset + 4096])

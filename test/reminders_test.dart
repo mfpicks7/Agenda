@@ -103,6 +103,15 @@ void main() {
     expect(gateway.scheduled.length, 2);
     restarted.dispose();
   });
+  test('Normaliza GMT a IANA sin sustituir zonas desconocidas', () async {
+    gateway.zone = 'GMT';
+    expect((await service.prepare(event(zone: null))).timeZoneId, 'Etc/UTC');
+    final invalid = FakeGateway()..zone = 'Invalid/Unknown';
+    final broken = ReminderCoordinator(repo, invalid);
+    await expectLater(broken.prepare(event(zone: null)), throwsA(anything));
+    expect(broken.initialized, isFalse);
+    broken.dispose();
+  });
   test('Prepara zona del teléfono y valida recordatorios duplicados o excesivos', () async {
     expect((await service.prepare(event(zone: null))).timeZoneId, 'America/New_York');
     expect(event(offsets: [0, 0]).validate(), isNotNull);

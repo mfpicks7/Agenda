@@ -2,6 +2,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:mi_agenda/features/reminders/notification_gateway.dart';
 
 class FakeGateway implements NotificationGateway {
+  String zone = 'America/New_York';
   bool enabled = true;
   bool exact = true;
   bool fail = false;
@@ -11,7 +12,7 @@ class FakeGateway implements NotificationGateway {
   @override
   Future<void> initialize(void Function(String) callback) async {}
   @override
-  Future<String> deviceTimeZone() async => 'America/New_York';
+  Future<String> deviceTimeZone() async => zone;
   @override
   Future<NotificationPermissionState> permissions() async => NotificationPermissionState(enabled: enabled, exact: exact);
   @override

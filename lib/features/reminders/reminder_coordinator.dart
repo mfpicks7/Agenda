@@ -28,7 +28,8 @@ class ReminderCoordinator extends ChangeNotifier {
     try {
       tzdata.initializeTimeZones();
       await gateway.initialize((id) => onTap?.call(id));
-      deviceZone = await gateway.deviceTimeZone();
+      final nativeZone = await gateway.deviceTimeZone();
+      deviceZone = nativeZone == 'GMT' || nativeZone == 'UTC' ? 'Etc/UTC' : nativeZone;
       tz.getLocation(deviceZone!); // No sustituir silenciosamente una zona desconocida por UTC.
       initialized = true;
     } catch (_) {
