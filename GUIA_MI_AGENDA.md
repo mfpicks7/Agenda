@@ -1,10 +1,10 @@
-# Mi Agenda — Android 1.0.1
+# Mi Agenda — Android 1.0.2
 
-Calendario mensual desde lunes, Trabajo azul y Personal verde, filtros, dos títulos por día y +N, actividades ordenadas por hora, crear/editar/eliminar con confirmación, notas y pendientes marcables y ordenables. Persistencia SQLite local mediante Drift. Sin cuentas, servidor, telemetría de la app ni permiso INTERNET.
+Calendario mensual compacto desde lunes, con puntos azules para Trabajo y verdes para Personal, selección con borde azul y actividades completas bajo el mes. Cabecera y calendario dentro de una tarjeta blanca. Permite crear y editar actividades, eliminarlas con confirmación y guardar notas y pendientes marcables y ordenables. Persistencia SQLite local mediante Drift. Sin cuentas, servidor, telemetría de la app ni permiso INTERNET.
 
 ## Descargar e instalar
 
-1. Abrir [la descarga verificada](https://github.com/mfpicks7/Agenda/actions/runs/38688141414/artifacts/11951730004), iniciando sesión en GitHub si lo pide.
+1. Abrir [la descarga verificada](https://github.com/mfpicks7/Agenda/actions/runs/38751233453/artifacts/11981647476), iniciando sesión en GitHub si lo pide.
 2. Descargar el ZIP y extraer `Mi-Agenda-debug.apk`.
 3. Abrir el APK en el teléfono Android. Si Android lo solicita, permitir la instalación desde el navegador o gestor de archivos empleado.
 
@@ -12,11 +12,11 @@ Es una APK de prueba. Los artefactos caducan el 29 de octubre de 2026. Para rege
 
 ## Validación realizada
 
-[Compilación y prueba Android correctas](https://github.com/mfpicks7/Agenda/actions/runs/38688141414): análisis sin incidencias, 11 pruebas Flutter correctas, APK compilada e instalada, primer arranque y reapertura correctos en emulador Android 35. Ver el alcance exacto en VERIFICACION.md. La prueba en el teléfono físico queda pendiente.
+[Compilación y prueba Android correctas](https://github.com/mfpicks7/Agenda/actions/runs/38751233453): análisis sin incidencias, 21 pruebas Flutter correctas, APK compilada e instalada, primer arranque y reapertura correctos en emulador Android 35. Ver el alcance exacto en VERIFICACION.md. La prueba en el teléfono físico queda pendiente.
 
 ## Comprobar en el teléfono
 
-1. Crear tres actividades para el mismo día, con categorías distintas. Comprobar nombres, colores, +1 y lista completa ordenada por hora.
+1. Crear tres actividades para el mismo día, con categorías distintas. Comprobar puntos de ambas categorías y lista completa ordenada por hora.
 2. Añadir notas y varios pendientes; marcar uno y comprobar que otra actividad no cambia.
 3. Cerrar la aplicación y volver a abrir: comprobar que notas, actividades y casillas conservan su estado. El calendario abre en el día actual deliberadamente.
 4. Editar título, fecha, hora y categoría. Comprobar los cambios en el calendario.
@@ -66,3 +66,7 @@ Drift usa SQL explícito sin código generado. Guardar actividad y tareas es tra
 La primera APK no ofrece alarmas ni repetición. La firma debug es temporal y puede cambiar entre compilaciones de runners distintos; no desinstalar una agenda con datos importantes para resolver un conflicto de firma. Antes de distribuir actualizaciones se necesita una firma estable gestionada de forma segura.
 
 El icono de la versión 1.0.1 utiliza la imagen MF proporcionada por el usuario. Se incluye en el lanzador y en su variante adaptable para Android 8+.
+
+## Pantalla principal 1.0.2
+
+El mes se muestra completo con puntos por categoría. Los nombres aparecen en la lista inferior al tocar una fecha. Tocar Trabajo o Personal en la leyenda filtra la agenda; tocar otra vez la categoría o Todos quita el filtro. El botón Nueva actividad permanece fuera del calendario. Con texto muy ampliado la pantalla permite desplazarse para conservar la legibilidad.

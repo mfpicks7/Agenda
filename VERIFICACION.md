@@ -1,3 +1,19 @@
+# Actualización 1.0.2 — mes completo y referencia visual
+
+- [Ejecución verificada](https://github.com/mfpicks7/Agenda/actions/runs/38751233453), commit `32f300e5d0344e44f8b8e6f0ace300a7a36d2b86`.
+- [Descargar APK 1.0.2](https://github.com/mfpicks7/Agenda/actions/runs/38751233453/artifacts/11981647476).
+- Se sustituye el calendario de celdas altas por una tarjeta compacta: mes/año y Hoy en la cabecera, puntos por categoría, selección azul y lista diaria con tarjetas grises. Los días ajenos al mes quedan vacíos. El botón de crear queda fuera de la tarjeta y no cubre el mes.
+- Los nombres completos se conservan en la lista diaria y en las etiquetas de accesibilidad. No hay cambios del esquema SQLite ni de los datos guardados, notas o tareas. El icono MF se conserva.
+- Análisis Flutter sin incidencias; **21 pruebas correctas**; compilación debug correcta.
+- Nueve pruebas de visibilidad: meses de cuatro/cinco/seis semanas en 320x568, 360x640 y 390x844. En cada caso el último día y el calendario quedan por encima del botón sin desplazamiento inicial.
+- Texto doble en 320 px y títulos largos sin overflow. Los números de las fechas se mantienen en una sola línea. Se conservan las pruebas CRUD, filtros, persistencia y transacciones.
+- Instalación, arranque y reapertura correctos en emulador Android 35. Captura real revisada visualmente: se ve todo octubre hasta el 31, cabecera y selección dentro de la tarjeta, leyenda y sección del día debajo, y botón fuera del calendario. La captura usa una agenda vacía del emulador; no contiene datos personales ni actividades simuladas.
+- No se ha instalado esta actualización en el teléfono del usuario. La firma debug temporal puede impedir una actualización sobre otra APK de pruebas; no desinstalar una agenda con datos importantes para resolver el conflicto.
+
+La referencia visual actualizada por el usuario reemplaza los requisitos antiguos de títulos dentro de cada celda y +N. La actualización está registrada en AGENTS.md y en la especificación. Se conserva debajo el historial de entregas anteriores.
+
+---
+
 # Actualización 1.0.1 — icono de la aplicación
 
 - Commit: `fb620b6a6f2640c46af824211f49dab7b9a92590`.
