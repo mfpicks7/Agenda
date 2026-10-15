@@ -86,3 +86,7 @@ La actividad guarda la zona horaria del teléfono al configurar su primer aviso.
 La campana muestra permisos, zona, cantidad de avisos futuros y errores de programación. Permite abrir los ajustes del teléfono y volver a sincronizar. Android puede retrasar avisos aproximados. El ahorro de batería, un canal silenciado o No molestar pueden impedir el sonido. Forzar la detención bloquea alarmas hasta abrir la app de nuevo. La configuración incluye restauración tras reiniciar Android; la entrega después de un reinicio físico y el comportamiento de fabricantes concretos requieren pruebas en el teléfono.
 
 Si Android rechaza la actualización por una firma diferente, **no desinstalar si hay datos importantes**: la firma debug es temporal y todavía no existe exportación de la agenda.
+
+## Conflicto de firmas y recuperación — 1.1.1
+
+Si la actualización da conflicto con un paquete y hay datos que conservar, no desinstalar la agenda. La APK separada `Mi-Agenda-Recuperacion.apk` usa el identificador `com.miagenda.recuperacion` y puede coexistir con la anterior. Desde la campana → Respaldo y recuperación se puede seleccionar el TXT original de aShellYou, comprobar su integridad y restaurarlo únicamente en una agenda vacía. Ver [procedimiento completo](RECUPERACION.md). También permite guardar copias SQLite consistentes con el selector de documentos del teléfono, sin Shizuku.

@@ -1,3 +1,18 @@
+# Actualización 1.1.1 — recuperación sin reemplazar la agenda anterior
+
+- [Ejecución completa correcta](https://github.com/mfpicks7/Agenda/actions/runs/38814688023), commit `4efc9da9bfadf8dce56cc28152e46c4e925e9e54`.
+- [Descargar Mi Agenda Recuperación](https://github.com/mfpicks7/Agenda/actions/runs/38814688023/artifacts/12011080142): ZIP con `Mi-Agenda-Recuperacion.apk`, paquete separado `com.miagenda.recuperacion`.
+- Análisis sin incidencias, **35 pruebas Flutter correctas**, APK normal y de recuperación compiladas.
+- Respaldo consistente mediante VACUUM INTO y selector de documentos Android. Importación de SQLite y TXT de aShellYou: copia temporal, integridad, migración, validación, vista previa y restauración transaccional únicamente con agenda de destino vacía. Conserva IDs, notas sin recortar, fechas, horas, marcas y timestamps; no copia el registro de notificaciones del otro paquete.
+- Prueba nativa Android 35: APK de recuperación instalada junto a la normal; TXT sintético elegido con el selector de Android; vista previa y confirmación; dos actividades y dos tareas restauradas; notas, horarios, timestamps y estado completado comprobados en SQLite; integridad OK; reapertura correcta. La base de datos del paquete anterior permaneció idéntica byte a byte.
+- Se repitieron correctamente las pruebas de avisos inmediato y programado en segundo plano, permiso bloqueado y precisión denegada.
+- Las pruebas usan datos sintéticos. Ningún respaldo personal fue subido al repositorio ni a CI. La restauración en el teléfono del usuario todavía requiere seleccionar allí su TXT y revisar los datos.
+- La firma debug sigue siendo temporal. La APK separada evita el conflicto con el paquete anterior; no equivale a recuperar su clave de firma. No se modificaron ni publicaron claves, y no hay release de distribución.
+
+Ver [procedimiento de recuperación](RECUPERACION.md). Se conserva debajo el historial.
+
+---
+
 # Actualización 1.1.0 — recordatorios locales
 
 - Versión `1.1.0+4`, paquete independiente `com.miagenda.local`.
