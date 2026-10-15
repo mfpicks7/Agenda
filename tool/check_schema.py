@@ -5,8 +5,8 @@ import tempfile
 from pathlib import Path
 
 source = (Path(__file__).resolve().parents[1] / 'lib/core/database/app_database.dart').read_text()
-statements = re.findall(r"customStatement\('''(CREATE.*?)'''\)", source, re.S)
-statements += re.findall(r"customStatement\('(CREATE INDEX[^']*)'\)", source)
+statements = re.findall(r"customStatement\(\s*'''(CREATE.*?)'''\s*,?\s*\)", source, re.S)
+statements += re.findall(r"customStatement\(\s*'(CREATE INDEX[^']*)'\s*,?\s*\)", source)
 assert len(statements) == 4
 with tempfile.TemporaryDirectory() as folder:
     path = Path(folder) / 'agenda.sqlite'

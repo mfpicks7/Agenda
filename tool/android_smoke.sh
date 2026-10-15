@@ -17,12 +17,12 @@ sleep 8
 agenda_pid="$(adb shell pidof -s "$agenda_package" | tr -d '\r')"
 [ -n "$agenda_pid" ] || { echo 'La app se cerró tras el arranque.' >&2; exit 1; }
 adb logcat --pid="$agenda_pid" -d -s AndroidRuntime:E flutter:E > smoke-results/errores-arranque.txt
-if rg -q 'FATAL EXCEPTION|Unhandled Exception|Error while opening database' smoke-results/errores-arranque.txt; then
+if grep -Eq 'FATAL EXCEPTION|Unhandled Exception|Error while opening database' smoke-results/errores-arranque.txt; then
   echo 'El arranque registró un error. Revisar smoke-results/errores-arranque.txt.' >&2
   exit 1
 fi
 adb shell dumpsys activity activities > smoke-results/actividad.txt
-rg 'mResumedActivity.*com\.miagenda\.local|topResumedActivity.*com\.miagenda\.local' smoke-results/actividad.txt
+grep -E 'mResumedActivity.*com\.miagenda\.local|topResumedActivity.*com\.miagenda\.local' smoke-results/actividad.txt
 adb exec-out screencap -p > smoke-results/primer-arranque.png
 # Comprueba que el archivo SQLite se creó y sobrevive a cerrar/reabrir.
 # run-as funciona para la build debug; solo lista el archivo, sin leer datos personales.
@@ -33,7 +33,7 @@ sleep 5
 agenda_pid="$(adb shell pidof -s "$agenda_package" | tr -d '\r')"
 [ -n "$agenda_pid" ] || { echo 'La app se cerró tras reabrir.' >&2; exit 1; }
 adb logcat --pid="$agenda_pid" -d -s AndroidRuntime:E flutter:E > smoke-results/errores-reapertura.txt
-if rg -q 'FATAL EXCEPTION|Unhandled Exception|Error while opening database' smoke-results/errores-reapertura.txt; then
+if grep -Eq 'FATAL EXCEPTION|Unhandled Exception|Error while opening database' smoke-results/errores-reapertura.txt; then
   echo 'La reapertura registró un error.' >&2
   exit 1
 fi
